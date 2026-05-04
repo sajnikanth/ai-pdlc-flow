@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Spec-Driven Development</title>
+<link rel="stylesheet" href="https://arc3.sf.albelli.com/dist/cdn/arc.css">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: "BrandonTextA", "BrandonTextA Fallback", sans-serif;
+    background: #f0ece6;
+    padding: 40px;
+    color: #333333;
+  }
+
+  h1 {
+    text-align: center;
+    font-size: 28px;
+    font-weight: 700;
+    color: #333333;
+    margin-bottom: 6px;
+    letter-spacing: -0.3px;
+  }
+
+  .subtitle {
+    text-align: center;
+    font-size: 13px;
+    color: #777777;
+    margin-bottom: 40px;
+    letter-spacing: 0.3px;
+  }
+
+  .flow {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+  }
+
+  /* PHASE CARD */
+  .phase {
+    width: 820px;
+    border-radius: 4px;
+    overflow: hidden;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.10), 0 0 0 1px rgba(0,0,0,0.04);
+  }
+
+  .phase-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 20px;
+    color: white;
+    font-weight: 700;
+    font-size: 13px;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+  }
+
+  .phase-header .owner-badge, .deliver-header .owner-badge {
+    font-size: 12px;
+    font-weight: 700;
+    background: rgba(255,255,255,0.30);
+    padding: 4px 12px;
+    border-radius: 2px;
+    letter-spacing: 0;
+    text-transform: none;
+    color: #ffffff;
+  }
+
+  .phase-body {
+    background: #ffffff;
+    padding: 16px 20px;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 12px;
+  }
+
+  .cell-label {
+    font-size: 9px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #939393;
+    margin-bottom: 5px;
+  }
+
+  .cell-content {
+    font-size: 12px;
+    color: #333333;
+    line-height: 1.6;
+  }
+
+  .tag {
+    display: inline-block;
+    font-size: 10px;
+    padding: 2px 8px;
+    border-radius: 2px;
+    margin: 2px 2px 2px 0;
+    font-weight: 500;
+  }
+
+  .gate-box {
+    grid-column: span 3;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    background: #fafafa;
+    border-radius: 2px;
+    padding: 10px 14px;
+    border-left: 3px solid;
+    margin-top: 4px;
+    border-top: 1px solid #eeeeee;
+    border-right: 1px solid #eeeeee;
+    border-bottom: 1px solid #eeeeee;
+  }
+
+  .gate-icon {
+    font-size: 15px;
+  }
+
+  .gate-text {
+    font-size: 12px;
+    font-weight: 600;
+    color: #333333;
+  }
+
+  .output-box {
+    grid-column: span 3;
+    border-radius: 2px;
+    padding: 10px 14px;
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .output-label {
+    font-size: 9px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    white-space: nowrap;
+    padding-top: 2px;
+  }
+
+  .output-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+  }
+
+  /* ARROW */
+  .arrow {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 2px 0;
+  }
+
+  .arrow-line {
+    width: 2px;
+    height: 24px;
+    background: #cccccc;
+  }
+
+  .arrow-head {
+    width: 0;
+    height: 0;
+    border-left: 7px solid transparent;
+    border-right: 7px solid transparent;
+    border-top: 9px solid #cccccc;
+  }
+
+  /* DELIVER — sub-phases */
+  .deliver-wrapper {
+    width: 820px;
+    border-radius: 4px;
+    overflow: hidden;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.10), 0 0 0 1px rgba(0,0,0,0.04);
+  }
+
+  .deliver-header {
+    border-radius: 4px 4px 0 0;
+    padding: 14px 20px;
+    color: white;
+    font-weight: 700;
+    font-size: 13px;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .sub-phases {
+    display: flex;
+    flex-direction: column;
+    background: white;
+  }
+
+  .sub-row-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    border-bottom: 1px solid #eeeeee;
+  }
+
+  .sub-row-grid:last-child {
+    border-bottom: none;
+  }
+
+  .sub-cell {
+    padding: 10px 14px;
+    border-right: 1px solid #eeeeee;
+    font-size: 11px;
+    color: #333333;
+    line-height: 1.6;
+  }
+
+  .sub-cell:last-child {
+    border-right: none;
+  }
+
+  .sub-cell-title {
+    padding: 10px 14px;
+    border-right: 1px solid #eeeeee;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid;
+  }
+
+  .sub-cell-title:last-child {
+    border-right: none;
+  }
+
+  /* COLORS — ARC-3 albelli palette */
+
+  /* Discover: teal/secondary */
+  .discover .phase-header { background: #007377; }
+  .discover .gate-box { border-color: #007377; }
+  .discover .output-box { background: #edf5f6; }
+  .discover .output-label { color: #007377; }
+  .discover .tag { background: #c5ddde; color: #00585f; }
+
+  /* Define: navy/blue */
+  .define .phase-header { background: #1f386e; }
+  .define .gate-box { border-color: #1f386e; }
+  .define .output-box { background: #eaeff7; }
+  .define .output-label { color: #1f386e; }
+  .define .tag { background: #c5d3e8; color: #1f386e; }
+
+  /* Design: orange/primary */
+  .design .phase-header { background: #f4633a; }
+  .design .gate-box { border-color: #f4633a; }
+  .design .output-box { background: #feece7; }
+  .design .output-label { color: #de3a0d; }
+  .design .tag { background: #fcdcd4; color: #b22f0a; }
+
+  /* Deliver: navy */
+  .deliver-header { background: #1f386e; }
+  .decompose .sub-cell-title { border-color: #007377; color: #007377; }
+  .implement .sub-cell-title { border-color: #1f386e; color: #1f386e; }
+  .ship .sub-cell-title { border-color: #f4633a; color: #de3a0d; }
+
+  /* Validate: error red */
+  .validate .phase-header { background: #b8252c; }
+  .validate .gate-box { border-color: #b8252c; }
+  .validate .output-box { background: #fce8e8; }
+  .validate .output-label { color: #b8252c; }
+  .validate .tag { background: #f9d0d1; color: #7a181c; }
+
+  /* Spec banners */
+  .spec-banner {
+    grid-column: span 3;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: #f4f4f4;
+    border-radius: 2px;
+    padding: 10px 14px;
+    border-left: 3px solid #1f386e;
+    margin-top: 4px;
+  }
+
+  .spec-name {
+    font-size: 12px;
+    font-weight: 700;
+    color: #333333;
+    margin-right: 4px;
+  }
+
+  .spec-detail {
+    font-size: 11px;
+    color: #777777;
+  }
+
+  @media print {
+    * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+  }
+
+  .footer {
+    text-align: center;
+    font-size: 11px;
+    color: #939393;
+    margin-top: 32px;
+    letter-spacing: 0.3px;
+  }
+</style>
+</head>
+<body>
+
+<h1>Spec-Driven Development</h1>
+<p class="subtitle">Human-gated · AI-accelerated · Spec-driven</p>
+
+<div class="flow">
+
+  <!-- DISCOVER -->
+  <div class="phase discover">
+    <div class="phase-header">
+      DISCOVER
+      <span class="owner-badge">PM + UX Researcher + Stakeholders</span>
+    </div>
+    <div class="phase-body">
+      <div>
+        <div class="cell-label">Activities</div>
+        <div class="cell-content">User interviews · Support ticket analysis · Opportunity sizing</div>
+      </div>
+      <div>
+        <div class="cell-label">AI Assists</div>
+        <div class="cell-content">Synthesize research · Pattern-find in feedback</div>
+      </div>
+      <div>
+        <div class="cell-label">Decider</div>
+        <div class="cell-content">PM</div>
+      </div>
+      <div class="spec-banner" style="border-color:#007377;">
+        <span class="output-label" style="color:#007377;">Output</span>
+        <span style="font-size:15px;">📄</span>
+        <span class="spec-name" style="color:#007377;">Problem Statement</span>
+        <span class="spec-detail">Who is affected · Cost of inaction · Numeric success metrics</span>
+      </div>
+      <div class="gate-box">
+        <span class="gate-icon">🚦</span>
+        <span class="gate-text">Decision: is this worth pursuing?</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="arrow"><div class="arrow-line"></div><div class="arrow-head"></div></div>
+
+  <!-- DEFINE -->
+  <div class="phase define">
+    <div class="phase-header">
+      DEFINE
+      <span class="owner-badge">PM + UX Researcher + Stakeholders</span>
+    </div>
+    <div class="phase-body">
+      <div>
+        <div class="cell-label">Activities</div>
+        <div class="cell-content">Write discovery spec · Align stakeholders</div>
+      </div>
+      <div>
+        <div class="cell-label">AI Assists</div>
+        <div class="cell-content">Draft spec · Challenge assumptions · Find gaps · Generate edge cases</div>
+      </div>
+      <div>
+        <div class="cell-label">Decider</div>
+        <div class="cell-content">PM</div>
+      </div>
+      <div class="spec-banner">
+        <span class="output-label" style="color:#1f386e;">Output</span>
+        <span style="font-size:15px;">📄</span>
+        <span class="spec-name">Discovery Spec</span>
+        <span class="spec-detail">Press release / FAQ · Goals + Non-goals · Personas · Functional requirements · Non-functional requirements · Solution options · Open questions</span>
+      </div>
+      <div class="gate-box">
+        <span class="gate-icon">🚦</span>
+        <span class="gate-text">Decision: do we have enough clarity to design a solution?</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="arrow"><div class="arrow-line"></div><div class="arrow-head"></div></div>
+
+  <!-- DESIGN -->
+  <div class="phase design">
+    <div class="phase-header">
+      DESIGN
+      <span class="owner-badge">Designer + (Senior) Engineer + PM</span>
+    </div>
+    <div class="phase-body">
+      <div>
+        <div class="cell-label">Activities</div>
+        <div class="cell-content">Wireframes · User flows · Data model · API contract · Architecture</div>
+      </div>
+      <div>
+        <div class="cell-label">AI Assists</div>
+        <div class="cell-content">Generate wireframe suggestions · Draft user flows · Suggest copy · Flag a11y issues · Draft API contracts · Data model options · Tradeoff analysis</div>
+      </div>
+      <div>
+        <div class="cell-label">Deciders</div>
+        <div class="cell-content">
+          <ul style="margin:0;padding-left:14px;line-height:1.8;">
+            <li>Designer</li>
+            <li>(Senior) Engineer</li>
+            <li>Domain Principal Engineer <span style="font-weight:400;color:#777;">(if tech strategy alignment needed)</span></li>
+          </ul>
+        </div>
+      </div>
+      <div class="spec-banner" style="border-color:#f4633a;">
+        <span class="output-label" style="color:#de3a0d;">Output</span>
+        <span style="font-size:15px;">📄</span>
+        <span class="spec-name">UX Design Spec</span>
+        <span class="spec-detail">Wireframes + user flows · Error + empty states</span>
+      </div>
+      <div class="spec-banner" style="border-color:#f4633a;">
+        <span class="output-label" style="color:#de3a0d;">Output</span>
+        <span style="font-size:15px;">📄</span>
+        <span class="spec-name">Tech Design Spec (Optional)</span>
+        <span class="spec-detail">Data model + indexes · API contract per endpoint · Architecture decision record</span>
+      </div>
+      <div class="gate-box">
+        <span class="gate-icon">🚦</span>
+        <span class="gate-text">Decision: all open questions resolved and spec is agent-ready?</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="arrow"><div class="arrow-line"></div><div class="arrow-head"></div></div>
+
+  <!-- DELIVER -->
+  <div class="deliver-wrapper">
+    <div class="deliver-header">
+      DELIVER
+      <span class="owner-badge">(Senior) Engineer</span>
+    </div>
+    <div class="sub-phases">
+
+      <!-- Titles row -->
+      <div class="sub-row-grid">
+        <div class="sub-cell-title decompose" style="border-color:#007377;color:#007377;">Decompose</div>
+        <div class="sub-cell-title implement" style="border-color:#1f386e;color:#1f386e;">Implement <span style="font-size:9px;font-weight:400;text-transform:none;">(repeats per spec)</span></div>
+        <div class="sub-cell-title ship" style="border-color:#d93175;color:#d93175;">Ship <span style="font-size:9px;font-weight:400;text-transform:none;">(A/B test)</span></div>
+      </div>
+      <!-- Activities row -->
+      <div class="sub-row-grid">
+        <div class="sub-cell"><div class="cell-label">Activities</div>Break specs into delivery specs</div>
+        <div class="sub-cell"><div class="cell-label">Activities</div>AI coding agent runs against delivery spec</div>
+        <div class="sub-cell"><div class="cell-label">Activities</div>Merge · Deploy · Feature flag rollout</div>
+      </div>
+      <!-- AI Assists row -->
+      <div class="sub-row-grid">
+        <div class="sub-cell"><div class="cell-label">AI Assists</div>Draft delivery specs from discovery spec</div>
+        <div class="sub-cell"><div class="cell-label">AI Assists</div>Writes code · Writes tests</div>
+        <div class="sub-cell"><div class="cell-label">AI Assists</div>Generate release notes · Flag risky changes</div>
+      </div>
+      <!-- Decider row -->
+      <div class="sub-row-grid">
+        <div class="sub-cell"><div class="cell-label">Decider</div>(Senior) Engineer</div>
+        <div class="sub-cell"><div class="cell-label">Decider</div>Engineer · Designer (UI only)</div>
+        <div class="sub-cell"><div class="cell-label">Decider</div>Engineer</div>
+      </div>
+      <!-- Output row -->
+      <div class="sub-row-grid" style="background:white;align-items:stretch;">
+        <div class="sub-cell" style="border-right:1px solid #eeeeee;padding:10px 14px;display:flex;flex-direction:column;">
+          <div style="background:#f4f4f4;border-left:3px solid #1f386e;border-radius:2px;padding:8px 10px;flex:1;">
+            <div class="cell-label" style="color:#1f386e;">Output</div>
+            <span style="font-size:12px;">📄</span>
+            <span class="spec-name">Delivery Spec</span>
+            <span class="spec-detail">Context · Inputs/outputs · Constraints · Acceptance criteria · Out of scope</span>
+          </div>
+        </div>
+        <div class="sub-cell" style="border-right:1px solid #eeeeee;padding:10px 14px;display:flex;flex-direction:column;">
+          <div style="background:#f4f4f4;border-left:3px solid #1f386e;border-radius:2px;padding:8px 10px;flex:1;">
+            <div class="cell-label" style="color:#1f386e;">Output</div>
+            <span class="spec-detail">Implementation code · Tests · PR → acceptance criteria</span>
+          </div>
+        </div>
+        <div class="sub-cell" style="padding:10px 14px;display:flex;flex-direction:column;">
+          <div style="background:#f4f4f4;border-left:3px solid #1f386e;border-radius:2px;padding:8px 10px;flex:1;">
+            <div class="cell-label" style="color:#1f386e;">Output</div>
+            <span class="spec-detail">Feature live (A/B test)</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="arrow"><div class="arrow-line"></div><div class="arrow-head"></div></div>
+
+  <!-- VALIDATE -->
+  <div class="phase validate">
+    <div class="phase-header">
+      VALIDATE
+      <span class="owner-badge">PM</span>
+    </div>
+    <div class="phase-body">
+      <div>
+        <div class="cell-label">Activities</div>
+        <div class="cell-content">Measure success metrics · Monitor errors · Post-launch research</div>
+      </div>
+      <div>
+        <div class="cell-label">AI Assists</div>
+        <div class="cell-content">Analyze metrics · Surface anomalies · Synthesize user feedback</div>
+      </div>
+      <div>
+        <div class="cell-label">Decider</div>
+        <div class="cell-content">PM
+          <div style="margin-top:6px;font-size:11px;color:#777;">With input from: UX Researcher · Engineer · Data Analyst</div>
+        </div>
+      </div>
+      <div class="output-box">
+        <span class="output-label">Output</span>
+        <div class="output-tags">
+          <span class="tag">Target vs actual metrics</span>
+          <span class="tag">User feedback themes</span>
+          <span class="tag">Regressions found</span>
+        </div>
+      </div>
+      <div class="gate-box">
+        <span class="gate-icon">🚦</span>
+        <span class="gate-text">Decision: full rollout, iterate, or rollback?</span>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+
+<p style="text-align:center;font-size:13px;font-weight:700;color:#333333;margin-top:32px;">EM is not shown. EM is everywhere.</p>
+
+</body>
+</html>
