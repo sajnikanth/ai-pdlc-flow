@@ -310,6 +310,69 @@
     margin-top: 32px;
     letter-spacing: 0.3px;
   }
+
+  /* PDLC / SDLC bracket groups */
+  .section-group {
+    display: flex;
+    flex-direction: row;
+    align-items: stretch;
+    gap: 10px;
+  }
+
+  .section-phases {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .section-spacer {
+    width: 36px;
+    flex-shrink: 0;
+  }
+
+  .section-bracket {
+    display: flex;
+    flex-direction: row;
+    align-items: stretch;
+    flex-shrink: 0;
+    gap: 6px;
+  }
+
+  .bracket-label {
+    writing-mode: vertical-rl;
+    transform: rotate(180deg);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    align-self: center;
+  }
+
+  .bracket-right {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    width: 12px;
+  }
+
+  .bracket-cap {
+    width: 10px;
+    height: 2px;
+    flex-shrink: 0;
+  }
+
+  .bracket-line {
+    flex: 1;
+    width: 2px;
+  }
+
+  .pdlc-group .bracket-cap  { background: #007377; }
+  .pdlc-group .bracket-line { background: #007377; }
+  .pdlc-group .bracket-label { color: #007377; }
+
+  .sdlc-group .bracket-cap  { background: #1f386e; }
+  .sdlc-group .bracket-line { background: #1f386e; }
+  .sdlc-group .bracket-label { color: #1f386e; }
 </style>
 </head>
 <body>
@@ -318,6 +381,18 @@
 <p class="subtitle">Human-gated · AI-accelerated · Spec-driven</p>
 
 <div class="flow">
+
+  <!-- PDLC: Discover + Define + Design -->
+  <div class="section-group pdlc-group">
+    <div class="section-bracket">
+      <span class="bracket-label">PDLC</span>
+      <div class="bracket-right">
+        <div class="bracket-cap"></div>
+        <div class="bracket-line"></div>
+        <div class="bracket-cap"></div>
+      </div>
+    </div>
+    <div class="section-phases">
 
   <!-- DISCOVER -->
   <div class="phase discover">
@@ -431,7 +506,23 @@
     </div>
   </div>
 
+    </div><!-- /section-phases -->
+    <div class="section-spacer"></div>
+  </div><!-- /pdlc-group -->
+
   <div class="arrow"><div class="arrow-line"></div><div class="arrow-head"></div></div>
+
+  <!-- SDLC: Deliver + Validate -->
+  <div class="section-group sdlc-group">
+    <div class="section-bracket">
+      <span class="bracket-label">SDLC</span>
+      <div class="bracket-right">
+        <div class="bracket-cap"></div>
+        <div class="bracket-line"></div>
+        <div class="bracket-cap"></div>
+      </div>
+    </div>
+    <div class="section-phases">
 
   <!-- DELIVER -->
   <div class="deliver-wrapper">
@@ -529,6 +620,10 @@
       </div>
     </div>
   </div>
+
+    </div><!-- /section-phases -->
+    <div class="section-spacer"></div>
+  </div><!-- /sdlc-group -->
 
 </div>
 
