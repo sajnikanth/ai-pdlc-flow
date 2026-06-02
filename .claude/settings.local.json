@@ -1,0 +1,24 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:aws.amazon.com)",
+      "Bash(git *)",
+      "Read(//Users/ssuriyanarayanan/.claude/**)",
+      "Read(//Users/ssuriyanarayanan/Library/CloudStorage/Dropbox/repo/dotfiles/.claude/**)",
+      "Bash(open *)",
+      "WebSearch",
+      "Bash(gh api *)",
+      "WebFetch(domain:www.albelli.nl)",
+      "mcp__plugin_chrome-devtools-mcp_chrome-devtools__take_screenshot",
+      "mcp__plugin_chrome-devtools-mcp_chrome-devtools__list_pages",
+      "mcp__plugin_chrome-devtools-mcp_chrome-devtools__navigate_page",
+      "mcp__plugin_chrome-devtools-mcp_chrome-devtools__take_snapshot",
+      "mcp__plugin_chrome-devtools-mcp_chrome-devtools__click",
+      "mcp__plugin_chrome-devtools-mcp_chrome-devtools__wait_for",
+      "WebFetch(domain:sajnikanth.github.io)",
+      "WebFetch(domain:dev.to)",
+      "WebFetch(domain:builder.aws.com)",
+      "WebFetch(domain:github.com)"
+    ]
+  }
+}

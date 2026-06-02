@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Prototype — Perfect Print Guarantee: Editor | Photobox</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+  <a href="#" class="nav-logo">
+    <span class="logo-box">📷</span>
+    Photobox
+  </a>
+  <div class="nav-steps">
+    <span class="step done">1. Design</span>
+    <span style="color:#ccc">›</span>
+    <span class="step active">2. Review</span>
+    <span style="color:#ccc">›</span>
+    <span class="step">3. Checkout</span>
+  </div>
+  <div class="autosave">
+    <span class="autosave-dot" id="saveDot"></span>
+    <span id="saveLabel">All changes saved</span>
+  </div>
+</nav>
+
+<!-- EDITOR -->
+<div class="editor-wrap">
+
+  <!-- LEFT SIDEBAR: Product info + positioning controls -->
+  <div class="sidebar left">
+
+    <div class="sidebar-section">
+      <div class="sidebar-title">Your product</div>
+      <div class="product-name">Classic Photo Book</div>
+      <div class="product-price">£75.00</div>
+      <div class="product-spec">30×30 cm · 40 pages · Hardcover</div>
+    </div>
+
+    <div class="sidebar-section">
+      <div class="sidebar-title">Position photo</div>
+      <div class="control-row">
+        <div class="control-label">
+          <span>Horizontal</span>
+          <span id="hVal">50%</span>
+        </div>
+        <input type="range" id="hSlider" min="0" max="100" value="50">
+      </div>
+      <div class="control-row">
+        <div class="control-label">
+          <span>Zoom</span>
+          <span id="zVal">100%</span>
+        </div>
+        <input type="range" id="zSlider" min="90" max="150" value="100">
+      </div>
+    </div>
+
+    <div class="sidebar-section">
+      <div class="sidebar-title">Simulate scenarios</div>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <button class="btn-sm btn-sm-ghost" onclick="setScenario('ok')" id="btn-ok">✅ All clear</button>
+        <button class="btn-sm btn-sm-ghost" onclick="setScenario('crop')" id="btn-crop">✂️ Head near edge</button>
+        <button class="btn-sm btn-sm-ghost" onclick="setScenario('lowres')" id="btn-lowres">⚠️ Low resolution</button>
+        <button class="btn-sm btn-sm-ghost" onclick="setScenario('both')" id="btn-both">🚨 Multiple issues</button>
+      </div>
+    </div>
+
+    <div class="sidebar-section">
+      <div class="sidebar-title">Version history</div>
+      <div class="ver-list">
+        <div class="ver-item current">
+          <div class="ver-thumb"></div>
+          <div style="flex:1">
+            <div class="ver-name">Version 3</div>
+            <div class="ver-time">Saved 2 min ago</div>
+          </div>
+          <span class="ver-badge">Current</span>
+        </div>
+        <div class="ver-item" onclick="this.classList.toggle('current')">
+          <div class="ver-thumb" style="background:linear-gradient(135deg,#F5D6E8,#E8C4D4)"></div>
+          <div style="flex:1">
+            <div class="ver-name">Version 2</div>
+            <div class="ver-time">Yesterday, 4:12pm</div>
+          </div>
+        </div>
+        <div class="ver-item" onclick="">
+          <div class="ver-thumb" style="background:linear-gradient(135deg,#D6EAF5,#C4D4E8)"></div>
+          <div style="flex:1">
+            <div class="ver-name">Version 1 (draft)</div>
+            <div class="ver-time">2 days ago</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- CANVAS -->
+  <div class="canvas">
+    <div class="product-frame" id="productFrame">
+      <div class="photo-bg" id="photoBg">
+        <div class="silhouette"></div>
+        <div class="face face-l" id="faceL"></div>
+        <div class="face face-r" id="faceR"></div>
+      </div>
+      <div class="crop-overlay" id="cropOverlay">
+        <div class="crop-tag">Will be cropped</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RIGHT SIDEBAR: Warnings + quality checks -->
+  <div class="sidebar right">
+
+    <div class="sidebar-section">
+      <div class="sidebar-title">Quality checks</div>
+      <div id="warningsPanel">
+        <div class="banner ok" id="allClearBanner">
+          <div class="banner-icon">✅</div>
+          <div class="banner-body">
+            <h4>Looks great!</h4>
+            <p>No issues detected. Your photo is ready to print.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sidebar-section">
+      <div class="sidebar-title">Resolution</div>
+      <div class="quality-row">
+        <div>
+          <div class="quality-name">Print quality</div>
+          <div class="quality-sub" id="resolutionLabel">Excellent · 3200×2400px</div>
+        </div>
+      </div>
+      <div class="quality-meter">
+        <div class="q-bar-track">
+          <div class="q-bar-fill good" id="qualityBar" style="width:95%"></div>
+        </div>
+        <div style="display:flex;justify-content:space-between;font-size:11px;margin-top:4px;color:var(--muted)">
+          <span>Poor</span><span>Good</span><span>Excellent</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="sidebar-section">
+      <div class="sidebar-title">Colour check</div>
+      <div class="banner info" style="margin-bottom:0">
+        <div class="banner-icon">🎨</div>
+        <div class="banner-body">
+          <h4>Colour verified</h4>
+          <p>Preview matches print output within Delta E &lt; 3. What you see is what you'll get.</p>
+        </div>
+      </div>
+    </div>
+
+    <div style="margin-top:auto;padding-top:16px">
+      <a href="preview.html" class="btn-primary" style="width:100%;justify-content:center">
+        Review & order →
+      </a>
+    </div>
+
+  </div>
+
+</div>
+
+<!-- PM NOTES -->
+<div class="pm-panel">
+  <div class="pm-content" id="pmContent">
+    <h4>📋 PM Design Notes</h4>
+    <ul>
+      <li>Crop warning triggers when a face/head comes within 20% of the print edge (FR2.2–2.3). Use the scenario buttons to demo.</li>
+      <li>The red overlay shows <em>exactly</em> what will be cut — customers understand visually before reading text.</li>
+      <li>One-click fixes ("Adjust frame", "Ignore") reduce support friction — customers feel in control.</li>
+      <li>Auto-save dot pulses amber while saving, goes green on success. Addresses FR7.1–7.2 (save every 30s).</li>
+      <li>Version history (FR8) prevents wrong-version orders — thumbnails make it scannable at a glance.</li>
+      <li>£75 order → triggers human expert review on Preview page (FR4.1).</li>
+    </ul>
+  </div>
+  <button class="pm-toggle" onclick="document.getElementById('pmContent').classList.toggle('open')">
+    📋 PM Notes
+  </button>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
