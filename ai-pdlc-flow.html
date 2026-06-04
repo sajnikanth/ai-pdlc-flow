@@ -70,6 +70,37 @@
     color: #ffffff;
   }
 
+  .executors-toggle {
+    cursor: pointer;
+    text-decoration: underline dotted rgba(255,255,255,0.5);
+  }
+  .executors-toggle .ex-expanded {
+    display: none;
+  }
+  .executors-toggle.expanded .ex-collapsed {
+    display: none;
+  }
+  .executors-toggle.expanded .ex-expanded {
+    display: inline;
+  }
+
+  .stakeholders-toggle {
+    cursor: pointer;
+    text-decoration: underline dotted rgba(255,255,255,0.5);
+  }
+  .stakeholders-toggle--light {
+    text-decoration: underline dotted rgba(0,0,0,0.3);
+  }
+  .stakeholders-toggle .sh-expanded {
+    display: none;
+  }
+  .stakeholders-toggle.expanded .sh-collapsed {
+    display: none;
+  }
+  .stakeholders-toggle.expanded .sh-expanded {
+    display: inline;
+  }
+
   .phase-body {
     background: #ffffff;
     padding: 16px 20px;
@@ -255,6 +286,8 @@
   .define .tag { background: #c5d3e8; color: #1f386e; }
 
   /* Design: orange/primary */
+  .diverge .phase-header { background: #6e4b9c; }
+
   .design .phase-header { background: #f4633a; }
   .design .gate-box { border-color: #f4633a; }
   .design .output-box { background: #feece7; }
@@ -382,6 +415,12 @@
 
 <div class="flow">
 
+  <div class="arrow" style="margin-bottom:4px;">
+    <div style="font-size:13px;color:#999;margin-bottom:4px;letter-spacing:0.03em;">Hypothesis / Customer Need</div>
+    <div class="arrow-line"></div>
+    <div class="arrow-head"></div>
+  </div>
+
   <!-- PDLC: Discover + Define + Design -->
   <div class="section-group pdlc-group">
     <div class="section-bracket">
@@ -398,12 +437,12 @@
   <div class="phase discover">
     <div class="phase-header">
       DISCOVER
-      <span class="owner-badge">PM + UX Researcher + Stakeholders</span>
+      <span class="owner-badge">Product Manager + <span class="stakeholders-toggle" onclick="toggleStakeholders(event)"><span class="sh-collapsed">Stakeholders ▾</span><span class="sh-expanded">SEO + UX Researcher + Product Marketing + CRO ▴</span></span></span>
     </div>
     <div class="phase-body">
       <div>
         <div class="cell-label">Activities</div>
-        <div class="cell-content">User interviews · Support ticket analysis · Opportunity sizing</div>
+        <div class="cell-content">User interviews · Support ticket analysis · Opportunity sizing · Hypothesis validation with CRO</div>
       </div>
       <div>
         <div class="cell-label">AI Assists</div>
@@ -411,13 +450,13 @@
       </div>
       <div>
         <div class="cell-label">Decider</div>
-        <div class="cell-content">PM</div>
+        <div class="cell-content">Product Manager + Goal Lead</div>
       </div>
       <div class="spec-banner" style="border-color:#007377;">
         <span class="output-label" style="color:#007377;">Output</span>
         <span style="font-size:15px;">📄</span>
         <span class="spec-name" style="color:#007377;">Problem Statement</span>
-        <span class="spec-detail">Who is affected · Cost of inaction · Numeric success metrics</span>
+        <span class="spec-detail">Who is affected · What customer needs are being addressed · Cost of inaction · Numeric success metrics</span>
       </div>
       <div class="gate-box">
         <span class="gate-icon">🚦</span>
@@ -432,7 +471,7 @@
   <div class="phase define">
     <div class="phase-header">
       DEFINE
-      <span class="owner-badge">PM + UX Researcher + Stakeholders + Designer + Engineer</span>
+      <span class="owner-badge">Product Manager + <span class="stakeholders-toggle" onclick="toggleStakeholders(event)"><span class="sh-collapsed">Stakeholders ▾</span><span class="sh-expanded">SEO + UX Researcher + Product Marketing + CRO ▴</span></span> + <span class="executors-toggle" onclick="toggleExecutors(event)"><span class="ex-collapsed">Executors ▾</span><span class="ex-expanded">Designer + Creative Studio + Content + Engineer ▴</span></span></span>
     </div>
     <div class="phase-body">
       <div>
@@ -445,7 +484,7 @@
       </div>
       <div>
         <div class="cell-label">Decider</div>
-        <div class="cell-content">PM</div>
+        <div class="cell-content">Product Manager + Goal Lead</div>
       </div>
       <div class="spec-banner">
         <span class="output-label" style="color:#1f386e;">Output</span>
@@ -462,11 +501,35 @@
 
   <div class="arrow"><div class="arrow-line"></div><div class="arrow-head"></div></div>
 
+  <!-- DIVERGE -->
+  <div class="phase diverge">
+    <div class="phase-header">
+      DIVERGE
+      <span class="owner-badge"><span class="executors-toggle" onclick="toggleExecutors(event)"><span class="ex-collapsed">Executors ▾</span><span class="ex-expanded">Designer + Creative Studio + Content + Engineer ▴</span></span></span>
+    </div>
+    <div class="phase-body">
+      <div>
+        <div class="cell-label">Activities</div>
+        <div class="cell-content">Benchmarking · Customer journey mapping · User flow exploration · Content hierarchy · Technical feasibility spike · Asset inventory · Visual reference gathering</div>
+      </div>
+      <div>
+        <div class="cell-label">AI Assists</div>
+        <div class="cell-content">Summarise competitor patterns · Generate journey map drafts · Identify technical constraints · Suggest asset reuse</div>
+      </div>
+      <div class="gate-box">
+        <span class="gate-icon">🚦</span>
+        <span class="gate-text">Decision: shared understanding sufficient to start designing together?</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="arrow"><div class="arrow-line"></div><div class="arrow-head"></div></div>
+
   <!-- DESIGN -->
   <div class="phase design">
     <div class="phase-header">
       DESIGN
-      <span class="owner-badge">Designer + Engineer + PM</span>
+      <span class="owner-badge"><span class="executors-toggle" onclick="toggleExecutors(event)"><span class="ex-collapsed">Executors ▾</span><span class="ex-expanded">Designer + Creative Studio + Content + Engineer ▴</span></span> + Product Manager</span>
     </div>
     <div class="phase-body">
       <div>
@@ -569,7 +632,7 @@
         <div class="sub-cell" style="border-right:1px solid #eeeeee;padding:10px 14px;display:flex;flex-direction:column;">
           <div style="background:#f4f4f4;border-left:3px solid #1f386e;border-radius:2px;padding:8px 10px;flex:1;">
             <div class="cell-label" style="color:#1f386e;">Output</div>
-            <span class="spec-detail">Implementation code · Tests · PR → acceptance criteria</span>
+            <span class="spec-detail">Implementation code · Tests · PR → acceptance criteria · Copy · Photos · Videos · Assets</span>
           </div>
         </div>
         <div class="sub-cell" style="padding:10px 14px;display:flex;flex-direction:column;">
@@ -589,7 +652,7 @@
   <div class="phase validate">
     <div class="phase-header">
       VALIDATE
-      <span class="owner-badge">PM</span>
+      <span class="owner-badge">Product Manager</span>
     </div>
     <div class="phase-body">
       <div>
@@ -602,8 +665,8 @@
       </div>
       <div>
         <div class="cell-label">Decider</div>
-        <div class="cell-content">PM
-          <div style="margin-top:6px;font-size:11px;color:#777;">With input from: UX Researcher · Engineer · Data Analyst</div>
+        <div class="cell-content">Product Manager
+          <div style="margin-top:6px;font-size:11px;color:#777;">With input from: <span class="stakeholders-toggle stakeholders-toggle--light" onclick="toggleStakeholders(event)"><span class="sh-collapsed">Stakeholders ▾</span><span class="sh-expanded">SEO + UX Researcher + Product Marketing + CRO ▴</span></span> · CRO</div>
         </div>
       </div>
       <div class="output-box">
@@ -625,10 +688,23 @@
     <div class="section-spacer"></div>
   </div><!-- /sdlc-group -->
 
+  <div style="display:flex;flex-direction:column;align-items:center;margin-top:4px;">
+    <div class="arrow-line"></div>
+    <div style="font-size:13px;color:#999;margin:6px 0;letter-spacing:0.03em;">↺ Feeds back into Discover</div>
+  </div>
+
 </div>
 
 
 <p style="text-align:center;font-size:13px;font-weight:700;color:#333333;margin-top:32px;">EM is not shown. EM is everywhere.</p>
 
+<script>
+  function toggleStakeholders(e) {
+    e.currentTarget.classList.toggle('expanded');
+  }
+  function toggleExecutors(e) {
+    e.currentTarget.classList.toggle('expanded');
+  }
+</script>
 </body>
 </html>
