@@ -37,6 +37,7 @@
     flex-direction: column;
     align-items: center;
     gap: 0;
+    position: relative;
   }
 
   /* PHASE CARD */
@@ -467,7 +468,7 @@
   <div class="arrow"><div class="arrow-line"></div><div class="arrow-head"></div></div>
 
   <!-- DEFINE -->
-  <div class="phase define">
+  <div class="phase define" id="phase-define">
     <div class="phase-header">
       DEFINE
       <span class="owner-badge">Product Manager + <span class="stakeholders-toggle" onclick="toggleStakeholders(event)"><span class="sh-collapsed">Stakeholders ▾</span><span class="sh-expanded">SEO + UX Researcher + Product Marketing + CRO + Merchandising ▴</span></span> + <span class="executors-toggle" onclick="toggleExecutors(event)"><span class="ex-collapsed">Executors ▾</span><span class="ex-expanded">Designer + Creative Studio + Content + Engineer ▴</span></span></span>
@@ -593,7 +594,7 @@
     <div class="section-phases">
 
   <!-- DELIVER -->
-  <div class="deliver-wrapper">
+  <div class="deliver-wrapper" id="phase-deliver">
     <div class="deliver-header">
       DELIVER
       <span class="owner-badge">Engineer</span>
@@ -699,6 +700,16 @@
     <div style="font-size:13px;color:#999;margin:6px 0;letter-spacing:0.03em;">↺ Feeds back into Discover</div>
   </div>
 
+  <!-- Delivery Cycle Time right bracket (positioned via JS) -->
+  <div id="dct-bracket" style="position:absolute; display:flex; flex-direction:row; align-items:stretch; gap:6px; visibility:hidden; pointer-events:none;">
+    <div style="display:flex; flex-direction:column; align-items:flex-end; width:12px; flex-shrink:0;">
+      <div style="width:10px; height:2px; background:#1f386e; flex-shrink:0;"></div>
+      <div style="width:2px; flex:1; background:#1f386e;"></div>
+      <div style="width:10px; height:2px; background:#1f386e; flex-shrink:0;"></div>
+    </div>
+    <span style="writing-mode:vertical-rl; transform:rotate(180deg); font-size:10px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:#1f386e; align-self:center; white-space:nowrap;">Delivery Cycle Time</span>
+  </div>
+
 </div>
 
 
@@ -711,6 +722,33 @@
   function toggleExecutors(e) {
     e.currentTarget.classList.toggle('expanded');
   }
+
+  function positionDCTBracket() {
+    var defineEl = document.getElementById('phase-define');
+    var deliverEl = document.getElementById('phase-deliver');
+    var bracket = document.getElementById('dct-bracket');
+    var spacer = document.querySelector('.pdlc-group .section-spacer');
+    var flow = document.querySelector('.flow');
+
+    if (!defineEl || !deliverEl || !bracket || !spacer || !flow) return;
+
+    var flowRect = flow.getBoundingClientRect();
+    var defineTop = defineEl.getBoundingClientRect().top - flowRect.top;
+    var deliverBottom = deliverEl.getBoundingClientRect().bottom - flowRect.top;
+    var spacerLeft = spacer.getBoundingClientRect().left - flowRect.left;
+
+    bracket.style.top = defineTop + 'px';
+    bracket.style.height = (deliverBottom - defineTop) + 'px';
+    bracket.style.left = spacerLeft + 'px';
+    bracket.style.visibility = 'visible';
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', positionDCTBracket);
+  } else {
+    positionDCTBracket();
+  }
+  window.addEventListener('resize', positionDCTBracket);
 </script>
 </body>
 </html>
